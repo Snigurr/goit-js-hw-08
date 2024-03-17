@@ -70,7 +70,7 @@ container.insertAdjacentHTML("beforeend", createMarkup(images));
 container.addEventListener("click", handleProductClick);
 
 function createMarkup(arr) {
-    // Создание разметки
+    
     return arr.map((image) => `
     <li class="gallery-item">
         <a class="gallery-link" href="${image.original}">
@@ -86,38 +86,35 @@ function createMarkup(arr) {
 }
 
 function handleProductClick(event) {
-    event.preventDefault(); 
-  
-    const clickedElement = event.target;
+    if (event.target.nodeName !== 'IMG') return;
+
+    event.preventDefault();
     
-    
-    if (clickedElement.nodeName !== 'IMG') {
-        return;
-    }
-    
-    
-    const source = clickedElement.dataset.source;
-    
-  
+    const { target } = event;
+    const source = target.dataset.source;
+        
     const instance = basicLightbox.create(`
         <div class="modal">
-            <img src="${source}" alt="${clickedElement.alt}">
+            <img src="${source}" alt="${target.alt}">
         </div>
     `);
 
     instance.show();
     
- 
-    const modalImage = instance.element().querySelector("img");
-    modalImage.addEventListener("click", () => {
-        instance.close(); 
-    });
-  
-  document.addEventListener('keydown', function(event) {
-   if (event.key === 'Escape') {
+    const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            instance.close();
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    };
+
+    const modalElement = instance.element(); 
+    modalElement.addEventListener('click', () => {
         instance.close();
-    }
-});
+        modalElement.removeEventListener('click', closeModal);
+    });
+
+    document.addEventListener('keydown', handleKeyDown);
 }
 
 
