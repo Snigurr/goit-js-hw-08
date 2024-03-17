@@ -69,47 +69,55 @@ const container = document.querySelector(".gallery");
 container.insertAdjacentHTML("beforeend", createMarkup(images));
 container.addEventListener("click", handleProductClick);
 
-
 function createMarkup(arr) {
-// створення розмітки
+    // Создание разметки
     return arr.map((image) => `
     <li class="gallery-item">
-  <a class="gallery-link" href="${image.original}">
-    <img
-      class="gallery-image"
-      src="${image.preview}"
-      data-source="${image.original}"
-      alt="${image.description}"
-    />
-  </a>
-</li>
+        <a class="gallery-link" href="${image.original}">
+            <img
+                class="gallery-image"
+                src="${image.preview}"
+                data-source="${image.original}"
+                alt="${image.description}"
+            />
+        </a>
+    </li>
     `).join("");
-    // джойн для повернення рядка, бо функцыя повертаэ масив
 }
 
-// функція слухача івенту
 function handleProductClick(event) {
-  event.preventDefault(); // зупиняє перехід по посиланню і скачування обьекту при кліку
+    event.preventDefault(); 
   
-    if (event.target === event.currentTarget) {
-        return;
-  }
-  
-    const currentObj = event.target.closest(".gallery-item");
-    const index = Array.from(container.children).indexOf(currentObj); // отримує індекс поточного елементу
+    const clickedElement = event.target;
     
+    
+    if (clickedElement.nodeName !== 'IMG') {
+        return;
+    }
+    
+    
+    const source = clickedElement.dataset.source;
+    
+  
     const instance = basicLightbox.create(`
-    <div class="modal">
-      <img src="${images[index].original}" alt="${images[index].description}">
-    </div>
+        <div class="modal">
+            <img src="${source}" alt="${clickedElement.alt}">
+        </div>
     `);
 
-  instance.show();
-   const modalImage = instance.element().querySelector("img");
-  modalImage.addEventListener("click", () => {
-      instance.close(); 
-  });
+    instance.show();
+    
+ 
+    const modalImage = instance.element().querySelector("img");
+    modalImage.addEventListener("click", () => {
+        instance.close(); 
+    });
   
+  document.addEventListener('keydown', function(event) {
+   if (event.key === 'Escape') {
+        instance.close();
+    }
+});
 }
 
 
