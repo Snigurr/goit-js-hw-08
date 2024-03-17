@@ -67,7 +67,7 @@ const images = [
 
 const container = document.querySelector(".gallery");
 container.insertAdjacentHTML("beforeend", createMarkup(images));
-container.addEventListener("click", handleProductClick);
+container.addEventListener("click", handleGalleryClick);
 
 function createMarkup(arr) {
     
@@ -85,10 +85,12 @@ function createMarkup(arr) {
     `).join("");
 }
 
-function handleProductClick(event) {
-    if (event.target.nodeName !== 'IMG') return;
+function handleGalleryClick(event) {
+    
+  if (event.target.nodeName !== 'IMG') return;
+  event.preventDefault();
 
-    event.preventDefault();
+    
     
     const { target } = event;
     const source = target.dataset.source;
@@ -107,12 +109,6 @@ function handleProductClick(event) {
             document.removeEventListener('keydown', handleKeyDown);
         }
     };
-
-    const modalElement = instance.element(); 
-    modalElement.addEventListener('click', () => {
-        instance.close();
-        modalElement.removeEventListener('click', closeModal);
-    });
 
     document.addEventListener('keydown', handleKeyDown);
 }
